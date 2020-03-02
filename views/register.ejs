@@ -1,0 +1,156 @@
+<html>
+    <head>
+        <meta charset = "UTF-8" />
+        <style>
+        .form-register {
+            max-width: 380px;
+            padding: 15px 35px 45px;
+            margin: 150 auto;
+            background-color: #fff;
+            border: 1px solid rgba(0,0,0,0.1); 
+        }
+        .reg_button {
+                background-color:rgb(41, 41, 53); /* Green */
+                border: none;
+                color: white; 
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 20px;
+                padding-left: 45px;
+                
+            }
+        </style>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <!-- <script src="../script.js"></script> -->
+        <meta name="google-signin-client_id" content="54507862157-mbvi9vip2rnr07iqhuosk77s7o2sb62o.apps.googleusercontent.com">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        
+    </head>
+
+    <body>
+        <div class="form-register">
+            <h1>Registration</h1>
+            <p id="empid_present" style="color: red;"></p>
+            
+            Enter name&nbsp;<input type='text' name='name' id='name' ><br><br>
+            Enter password&nbsp;<input type="password" name="password" id='password'><br><br>
+            Enter email&nbsp;<input type="email" name="email" id='email'><br><br>
+            
+            <button id='register' class="reg_button">submit</button>
+
+            
+            <h3>Or Signup Using:</h3><br>
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            <!-- <div class="data">
+                <p>Profile details</p>
+                <img id="pic" class="img-square" width="200" height="200"/>
+                <p>User id:</p>
+                <p id="id" > </p>
+                <p>Name:</p>
+                <p id="name" > </p>
+                <p>Email id:</p>
+                <p id="email" > </p>
+                
+                <button onclick="signout()" class="btn btn-danger"> Signout </button>
+            </div> -->
+            <br>
+            <label >
+                
+                <a  href="/temp"><img src="https://support.devex.com/hc//article_attachments/360009469354/fcda9b0849531ece66eba61c11c26deda4999b4d2fc04f488bef908953e8ed1f.png" width="300" height="60"></a>
+       
+              
+            </label>
+        </div>
+        
+
+        <script>
+    function onSignIn(user)
+    {
+        var profile=user.getBasicProfile();
+
+var data={
+                name : profile.getName(),
+                password :profile.getEmail(),
+                email : profile.getEmail()
+            };
+            console.log(data);
+            var xhttp = new XMLHttpRequest();
+            xhttp.open('POST', '/google2', true);
+            xhttp.setRequestHeader('Content-Type', 'application/json');
+            xhttp.onreadystatechange = function(){
+                if(this.readyState== 4 && this.status == 200){
+                    console.log(this.responseText);
+                    var json=JSON.parse(this.responseText);
+                    if(json.status=='added'){
+                        
+                        window.location.replace('/success2');
+                    }else{
+                        console.log("^^^^^^^^^^");
+                        alert("Employee-mail has been already Registered");
+                       // document.getElementById('empid_present').innerHTML="*Employee-id has been already Registered";
+                       
+                       window.location.replace('/');
+                        
+                        }       
+                }
+            };
+            xhttp.send(JSON.stringify(data));
+
+  
+}
+function signout()
+{
+    var auth=gapi.auth2.getAuthInstance();
+    auth.signOut().then(function(){
+      auth.disconnect();
+      gapi.auth2.getAuthInstance().currentUser.get().reloadAuthResponse();
+     alert("Signed out successfully");
+     $(".g-signin2").css("display","block");
+     $(".data").css("display","none");
+    });
+}
+            register.addEventListener('click',function(){
+                
+                var name=document.getElementById('name').value;
+                var password=document.getElementById('password').value;
+                var email=document.getElementById('email').value;
+                
+                if(name=='' || password=='' || email==''){
+                    alert("Enter all fields");
+                    return;
+                }
+                var data={
+                    name : name,
+                    password : password,
+                    email : email
+                }
+                console.log(data);
+                var xhttp = new XMLHttpRequest();
+                xhttp.open('POST', '/signup', true);
+                xhttp.setRequestHeader('Content-Type', 'application/json')
+                xhttp.onreadystatechange = function(){
+                    if(this.readyState== 4 && this.status == 200){
+                        console.log(this.responseText);
+                        var json=JSON.parse(this.responseText);
+                        if(json.status=='Inserted'){
+                            alert("User is now registered,please login");
+                            window.location.replace('/');
+                        }else{
+                            console.log("^^^^^^^^^^");
+                            alert("User already exists,please login");
+                           // document.getElementById('empid_present').innerHTML="*Employee-id has been already Registered";
+                            window.location.replace('/');
+                            
+                        }
+                    }
+                };
+                xhttp.send(JSON.stringify(data));
+            })
+            
+        </script>
+    </body>
+</html>

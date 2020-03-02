@@ -1,0 +1,17 @@
+require('./schema')
+var mongoose = require('mongoose')
+mongoose.connect('mongodb+srv://abc:abc123456@cluster0-6kppu.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
+var Users = mongoose.model('Users')
+app.post('/registration', (req, res) => {
+    Users.find({email: req.body.email},(err,docs)=>{
+        if(docs.length==0){
+            var user = new Users();
+            user.name = req.body.name;
+            user.password = req.body.password;
+            user.email = req.body.email;
+            res.send('Inserted');
+        }else{
+            res.send('Account Already Exists');
+        }
+    })
+})
